@@ -44,12 +44,12 @@ public class CustomerService {
     public CustomerResponse getById(String id) {
         return customerRepository.findById(id)
                 .map(CustomerResponse::from)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
+                .orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
     public CustomerResponse update(String id, CustomerRequest request) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
+                .orElseThrow(() -> new CustomerNotFoundException(id));
 
         // Check email conflict only if it changed
         if (!customer.getEmail().equals(request.email())
@@ -69,7 +69,7 @@ public class CustomerService {
 
     public void delete(String id) {
         if (!customerRepository.existsById(id)) {
-            throw new CustomerNotFoundException("Customer not found with id: " + id);
+            throw new CustomerNotFoundException(id);
         }
         customerRepository.deleteById(id);
     }
